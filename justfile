@@ -113,7 +113,7 @@ _venv_cpy_create:
 	{{cpy_bin}} -m venv --clear dev/venv-cpy
 
 _venv_cpy_update:
-	{{cpy_run}} pip install --upgrade pip
+	{{cpy_run}} python -m pip install --upgrade pip
 	{{cpy_run}} pip install -r doc/requirements.txt --upgrade build google-re2 google-re2-stubs hyperscan pytest pytest-benchmark setuptools tomli tox twine typing-extensions wheel
 	{{cpy_run}} pip install -e .
 
