@@ -26,7 +26,13 @@ venv="$1"
 shift
 
 # Activate venv.
-. "$venv/bin/activate"
+platform="$(uname -s)"
+# shellcheck disable=SC1091
+if [ "${platform}" = "Linux" ] || [ "${platform}" = "Darwin" ]; then
+	. "${venv}/bin/activate"
+else
+	. "${venv}/Scripts/activate"
+fi
 
 # Execute command.
 "$@"

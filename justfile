@@ -73,7 +73,11 @@ prebuild: _dist_prebuild
 # Development
 ################################################################################
 
-cpy_bin := env('cpy_bin', 'python3')
+cpy_bin := if os_family() != 'windows' {
+	env('cpy_bin', 'python3')
+} else {
+	env('cpy_bin', "py -`py -0 | head -1 | awk '$1=$1' | cut -d ' ' -f1 | cut -d ':' -f2`")
+}
 cpy_run := 'dev/venv.sh dev/venv-cpy'
 pypy_bin := env('pypy_bin', 'pypy3')
 pypy_run := 'dev/venv.sh dev/venv-pypy'
@@ -109,7 +113,8 @@ _venv_cpy_create:
 	{{cpy_bin}} -m venv --clear dev/venv-cpy
 
 _venv_cpy_update:
-	{{cpy_run}} pip install -r doc/requirements.txt --upgrade build google-re2 google-re2-stubs hyperscan pip pytest pytest-benchmark setuptools tomli tox twine typing-extensions wheel
+	{{cpy_run}} pip install --upgrade pip
+	{{cpy_run}} pip install -r doc/requirements.txt --upgrade build google-re2 google-re2-stubs hyperscan pytest pytest-benchmark setuptools tomli tox twine typing-extensions wheel
 	{{cpy_run}} pip install -e .
 
 _venv_pypy_create:
@@ -125,7 +130,7 @@ _venv_pypy_update:
 ################################################################################
 
 _dist_build: _dist_prebuild
-	find ./dist -type f -delete
+	find ./dist -type f -delete || mkdir ./dist
 	{{cpy_run}} python -m build
 
 _dist_prebuild:
